@@ -21,14 +21,18 @@ const signup = async (req, res, next) => {
 
     const pw_hash = await bcrypt.hash(password, 10)
     
-    await createUser({
+    const user = await createUser({
       username,
       pw_hash, 
       first_name,
       last_name
     })
 
-    res.redirect('/login')
+    req.login(user, (err) => {
+      if (err) { return next(err); }
+      return res.redirect('/membership')
+    });
+
   } catch(e) {
     next(e)
   }
