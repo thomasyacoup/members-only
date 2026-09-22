@@ -3,7 +3,7 @@ const path = require('path')
 const session_middleware = require('./config/session')
 const passport = require('./config/passport')
 const signUpValidators = require('./validators/signup.validator')
-const { signup } = require('./controllers/auth.controller')
+const { signup, updateMembership } = require('./controllers/auth.controller')
 const protectedRoute = require('./middlewares/protectedRoute')
 require('dotenv').config()
 
@@ -22,13 +22,16 @@ app.use(session_middleware)
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.post('/sign-up', signUpValidators, signup)
 app.get('/sign-up', (req, res) => {
   if (req.isAuthenticated()) return res.redirect('/')
   res.render('sign-up', { errors: [], body: {} })
 })
 
-app.post('/sign-up', signUpValidators, signup)
-
-app.get('/membership', protectedRoute, (req, res) => res.render('membership'))
+app.post('/membership', protectedRoute, updateMembership)
+app.get('/membership', protectedRoute, (req, res) => {
+  if (req.user.flag != 'visitor') return res.redirect('/');
+  res.render('membership', {errors: []})
+})
 
 app.listen(PORT)
