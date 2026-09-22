@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator")
-const { createUser } = require("../models/user.model")
+const { createUser, updateUserMembership } = require("../models/user.model")
 const bcrypt = require('bcryptjs')
 
 const signup = async (req, res, next) => {
@@ -38,4 +38,13 @@ const signup = async (req, res, next) => {
   }
 }
 
-module.exports = { signup }
+const updateMembership = async (req, res, next) => {
+  if (req.body.passcode !== '54321') {
+    return res.render('membership', { errors: [{msg: 'Passcode is incorrect.'}] })
+  }
+
+  await updateUserMembership(req.user.id, 'member')
+  res.redirect('/')
+}
+
+module.exports = { signup, updateMembership }
