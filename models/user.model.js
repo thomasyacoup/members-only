@@ -18,9 +18,12 @@ const createUser = async (user) => {
     last_name,
   } = user;
 
-  return await pool.query('\
+  const result = await pool.query('\
     INSERT INTO users (username, pw_hash, first_name, last_name) VALUES ($1, $2, $3, $4)\
+    RETURNING *\
   ', [username, pw_hash, first_name, last_name])
+
+  return result.rows[0]
 }
 
 const isUsernameTaken = async (username) => {
