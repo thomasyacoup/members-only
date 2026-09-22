@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+</head>
+<body>
+  <% if (errors) { %>
+    <ul>
+      <% errors.forEach(function(error) { %>
+        <li><%= error.msg %></li>
+      <% }); %>
+    </ul>
+  <% } %>
+  <form action="/sign-up" method="post">
+    <label>
+      username:
+      <input type="text" name="username" value="<%= typeof body !== 'undefined' ? body.username : '' %>">
+    </label>
+    <label>
+      password
+      <input type="password" name="password" value="<%= typeof body !== 'undefined' ? body.password : '' %>">
+    </label>
+    <label>
+      confirm password
+      <input type="password" name="confirm_password" value="<%= typeof body !== 'undefined' ? body.confirm_password : '' %>">
+    </label>
+    <label>
+      first name
+      <input type="text" name="first_name" value="<%= typeof body !== 'undefined' ? body.first_name : '' %>">
+    </label>
+    <label>
+      last name
+      <input type="text" name="last_name" value="<%= typeof body !== 'undefined' ? body.last_name : '' %>">
+    </label>
+    <button type="submit">Sign Up</button>
+  </form>
+</body>
+</html>
