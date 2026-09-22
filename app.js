@@ -22,6 +22,8 @@ app.use(session_middleware)
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.get('/', (req, res) => res.render('index', { req }))
+
 app.post('/sign-up', signUpValidators, signup)
 app.get('/sign-up', (req, res) => {
   if (req.isAuthenticated()) return res.redirect('/')
@@ -42,5 +44,12 @@ app.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login'
 }))
+
+app.get('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
 
 app.listen(PORT)
