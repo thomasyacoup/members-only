@@ -34,4 +34,13 @@ app.get('/membership', protectedRoute, (req, res) => {
   res.render('membership', {errors: []})
 })
 
+app.get('/login', (req, res) => {
+  if (req.isAuthenticated()) return res.redirect('/')
+  res.render('login', { errors: [], body: {} })
+})
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login'
+}))
+
 app.listen(PORT)
