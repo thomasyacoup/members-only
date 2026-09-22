@@ -10,4 +10,23 @@ const getUserById = async (id) => {
   return result.rows[0]
 }
 
-module.exports = { getUserByUsername, getUserById }
+const createUser = async (user) => {
+  const {
+    username,
+    pw_hash,
+    first_name,
+    last_name,
+  } = user;
+
+  return await pool.query('\
+    INSERT INTO users (username, pw_hash, first_name, last_name) VALUES ($1, $2, $3, $4)\
+  ', [username, pw_hash, first_name, last_name])
+}
+
+const isUsernameTaken = async (username) => {
+  const result = await pool.query('SELECT * FROM users WHERE username=$1', [username])
+  if (result.rows[0]) return true
+  return false
+}
+
+module.exports = { getUserByUsername, getUserById, createUser, isUsernameTaken }
