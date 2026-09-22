@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>login</title>
+</head>
+<body>
+  <% if (errors) { %>
+    <ul>
+      <% errors.forEach(function(error) { %>
+        <li><%= error.msg %></li>
+      <% }); %>
+    </ul>
+  <% } %>
+  <form action="/login" method="post">
+    <label>
+      username:
+      <input type="text" name="username" value="<%= typeof body !== 'undefined' ? body.username : '' %>">
+    </label>
+    <label>
+      password
+      <input type="password" name="password" value="<%= typeof body !== 'undefined' ? body.password : '' %>">
+    </label>
+    <button type="submit">login</button>
+  </form>
+</body>
+</html>
