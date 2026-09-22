@@ -5,6 +5,8 @@ const passport = require('./config/passport')
 const signUpValidators = require('./validators/signup.validator')
 const { signup, updateMembership } = require('./controllers/auth.controller')
 const protectedRoute = require('./middlewares/protectedRoute')
+const { addMessage } = require('./controllers/message.controller')
+const messageValidator = require('./validators/message.validator')
 require('dotenv').config()
 
 
@@ -51,5 +53,8 @@ app.get('/logout', (req, res, next) => {
     res.redirect('/');
   });
 });
+
+app.get('/new-message', protectedRoute, (req, res) => res.render('new-message', { errors: [], body: {} }))
+app.post('/new-message', protectedRoute, messageValidator, addMessage)
 
 app.listen(PORT)
