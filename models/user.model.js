@@ -32,4 +32,10 @@ const isUsernameTaken = async (username) => {
   return false
 }
 
-module.exports = { getUserByUsername, getUserById, createUser, isUsernameTaken }
+const updateUserMembership = async (id, membership) => {
+  await pool.query('\
+    UPDATE users SET flag=$1 WHERE id=$2\
+  ', [membership, id])
+}
+
+module.exports = { getUserByUsername, getUserById, createUser, isUsernameTaken, updateUserMembership }
