@@ -13,5 +13,18 @@
     <a href="/login">login</a>
     <a href="/sign-up">sign up</a>
   <% } %>
+  <% messages.forEach(message => { %>
+    <div>
+      <h2><%= req.isAuthenticated() ? message.author_name : 'Anonymous' %></h2>
+      <h3><%= message.title %></h3>
+      <p><%= message.content %></p>
+      <p><%= message.created_at.toLocaleDateString() %></p>
+      <% if ((req.isAuthenticated() && req.user.id === message.author_id) || req.isAuthenticated() && req.user.flag === 'admin') { %>
+        <form action="/delete-message/<%= message.id %>" method="post">
+          <button type="submit">delete</button>
+        </form>
+      <% } %>
+    </div>
+  <% }) %>
 </body>
 </html>

@@ -7,6 +7,7 @@ const { signup, updateMembership } = require('./controllers/auth.controller')
 const protectedRoute = require('./middlewares/protectedRoute')
 const { addMessage } = require('./controllers/message.controller')
 const messageValidator = require('./validators/message.validator')
+const { getAllMessages } = require('./models/message.model')
 require('dotenv').config()
 
 
@@ -24,7 +25,7 @@ app.use(session_middleware)
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/', (req, res) => res.render('index', { req }))
+app.get('/', async (req, res) => res.render('index', { req, messages: await getAllMessages() }))
 
 app.post('/sign-up', signUpValidators, signup)
 app.get('/sign-up', (req, res) => {
