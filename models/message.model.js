@@ -8,4 +8,14 @@ const createMessage = async (message, userId) => {
   return result.rows[0]
 } 
 
-module.exports = { createMessage }
+const getAllMessages = async () => {
+  const result = await pool.query(`
+    SELECT m.title, m.content, m.created_at, u.username AS author_name, m.author_id
+    FROM messages m 
+    JOIN users u ON u.id=m.author_id
+  `)
+
+  return result.rows
+}
+
+module.exports = { createMessage, getAllMessages }
