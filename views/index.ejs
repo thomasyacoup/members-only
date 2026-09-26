@@ -3,25 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
+  <title>Members Only</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f6f7f9; color: #111; line-height: 1.5; padding: 2rem 1rem; max-width: 720px; margin: 0 auto; }
+    nav { display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #ddd; }
+    nav a { text-decoration: none; color: #2563eb; font-weight: 500; font-size: 0.95rem; }
+    nav a:hover { text-decoration: underline; }
+    h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 0.25rem; }
+    .subtitle { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .card h2 { font-size: 1.05rem; margin-bottom: 0.25rem; }
+    .card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.25rem; color: #111; }
+    .card p { color: #333; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .meta { font-size: 0.8rem; color: #888; }
+    button { background: #111; color: #fff; border: none; padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    button:hover { background: #333; }
+    form { display: inline; }
+  </style>
 </head>
 <body>
-  <% if (req.isAuthenticated()) { %>
-    <a href="/logout">logout</a>
-    <a href="/new-message">create new message</a>
-  <% } else { %>
-    <a href="/login">login</a>  
-    <a href="/sign-up">sign up</a>
-  <% } %>
+  <nav>
+    <a href="/">Home</a>
+    <% if (req.isAuthenticated()) { %>
+      <a href="/new-message">New message</a>
+      <a href="/membership">Membership</a>
+      <a href="/logout">Logout</a>
+    <% } else { %>
+      <a href="/login">Login</a>
+      <a href="/sign-up">Sign up</a>
+    <% } %>
+  </nav>
+
+  <h1>Members Only</h1>
+  <p class="subtitle">A private message board.</p>
+
   <% messages.forEach(message => { %>
-    <div>
+    <div class="card">
       <h2><%= req.isAuthenticated() ? message.author_name : 'Anonymous' %></h2>
       <h3><%= message.title %></h3>
       <p><%= message.content %></p>
-      <p><%= message.created_at.toLocaleDateString() %></p>
-      <% if ((req.isAuthenticated() && req.user.id === message.author_id) || req.isAuthenticated() && req.user.flag === 'admin') { %>
-        <form action="/message/delete/<%= message.id %>" method="post">
-          <button type="submit">delete</button>
+      <p class="meta"><%= message.created_at.toLocaleDateString() %></p>
+      <% if ((req.isAuthenticated() && req.user.id === message.author_id) || (req.isAuthenticated() && req.user.flag === 'admin')) { %>
+        <form action="/message/delete/<%= message.id %>" method="post" onsubmit="return confirm('Delete this message?');">
+          <button type="submit">Delete</button>
         </form>
       <% } %>
     </div>
