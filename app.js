@@ -1,63 +1,76 @@
-const express = require('express')
-const path = require('path')
-const session_middleware = require('./config/session')
-const passport = require('./config/passport')
-const signUpValidators = require('./validators/signup.validator')
-const { signup, updateMembership } = require('./controllers/auth.controller')
-const protectedRoute = require('./middlewares/protectedRoute')
-const { addMessage, deleteMessage } = require('./controllers/message.controller')
-const messageValidator = require('./validators/message.validator')
-const { getAllMessages } = require('./models/message.model')
-require('dotenv').config()
+const express = require("express");
+const path = require("path");
+const session_middleware = require("./config/session");
+const passport = require("./config/passport");
+const signUpValidators = require("./validators/signup.validator");
+const { signup, updateMembership } = require("./controllers/auth.controller");
+const protectedRoute = require("./middlewares/protectedRoute");
+const {
+  addMessage,
+  deleteMessage,
+} = require("./controllers/message.controller");
+const messageValidator = require("./validators/message.validator");
+const { getAllMessages } = require("./models/message.model");
+const errorHandler = require("./middlewares/errorHandler");
+require("dotenv").config();
 
+const PORT = process.env.PORT;
 
-const PORT = process.env.PORT
+const app = express();
 
-const app = express()
-
-
-app.set("views", path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(session_middleware)
-app.use(passport.initialize())
-app.use(passport.session())
- 
-app.get('/', async (req, res) => res.render('index', { req, messages: await getAllMessages() }))
+app.use(session_middleware);
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.post('/sign-up', signUpValidators, signup)
-app.get('/sign-up', (req, res) => {
-  if (req.isAuthenticated()) return res.redirect('/')
-  res.render('sign-up', { errors: [], body: {} })
-})
+app.get("/", async (req, res) =>
+  res.render("index", { req, messages: await getAllMessages() }),
+);
 
-app.post('/membership', protectedRoute, updateMembership)
-app.get('/membership', protectedRoute, (req, res) => {
-  if (req.user.flag != 'visitor') return res.redirect('/');
-  res.render('membership', {errors: []})
-})
+app.post("/sign-up", signUpValidators, signup);
+app.get("/sign-up", (req, res) => {
+  if (req.isAuthenticated()) return res.redirect("/");
+  res.render("sign-up", { errors: [], body: {} });
+});
 
-app.get('/login', (req, res) => {
-  if (req.isAuthenticated()) return res.redirect('/')
-  res.render('login', { errors: [], body: {} })
-})
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login'
-}))
+app.post("/membership", protectedRoute, updateMembership);
+app.get("/membership", protectedRoute, (req, res) => {
+  if (req.user.flag != "visitor") return res.redirect("/");
+  res.render("membership", { errors: [] });
+});
 
-app.get('/logout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
+app.get("/login", (req, res) => {
+  if (req.isAuthenticated()) return res.redirect("/");
+  res.render("login", { errors: [], body: {} });
+});
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  }),
+);
+
+app.get("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
   });
 });
 
-app.get('/new-message', protectedRoute, (req, res) => res.render('new-message', { errors: [], body: {} }))
-app.post('/new-message', protectedRoute, messageValidator, addMessage)
+app.get("/new-message", protectedRoute, (req, res) =>
+  res.render("new-message", { errors: [], body: {} }),
+);
+app.post("/new-message", protectedRoute, messageValidator, addMessage);
 
-app.post('/message/delete/:id', protectedRoute, deleteMessage)
+app.post("/message/delete/:id", protectedRoute, deleteMessage);
 
-app.listen(PORT)
+app.use(errorHandler);
+
+app.listen(PORT);
