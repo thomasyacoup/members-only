@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator")
-const { createMessage } = require("../models/message.model")
+const { createMessage, removeMessage, getMessage } = require("../models/message.model")
 
 const addMessage = async (req, res, next) => {
   const validationErrors = validationResult(req)
@@ -23,4 +23,18 @@ const addMessage = async (req, res, next) => {
   }
 }
 
-module.exports = { addMessage }
+const deleteMessage = async (req, res, next) => {
+  try {
+    const messageId = req.params.id
+    const message = await getMessage(messageId)
+    const userId = req.user.id
+    if (message.author_id == userId || req.user.flag == 'admin') {
+      await removeMessage(messageId)
+      return res.redirect('/')
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports = { addMessage, deleteMessage }

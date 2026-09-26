@@ -1,50 +1,48 @@
-const { validationResult } = require("express-validator")
-const { createUser, updateUserMembership } = require("../models/user.model")
-const bcrypt = require('bcryptjs')
+const { validationResult } = require("express-validator");
+const { createUser, updateUserMembership } = require("../models/user.model");
+const bcrypt = require("bcryptjs");
 
 const signup = async (req, res, next) => {
-  const validationErrors = validationResult(req)
+  const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
-    return res.render('sign-up', {
+    return res.render("sign-up", {
       body: req.body,
-      errors: validationErrors.array()
-    })
+      errors: validationErrors.array(),
+    });
   }
-  
-  try {
-    const {
-      username,
-      password,
-      first_name,
-      last_name,
-    } = req.body
 
-    const pw_hash = await bcrypt.hash(password, 10)
-    
+  try {
+    const { username, password, first_name, last_name } = req.body;
+
+    const pw_hash = await bcrypt.hash(password, 10);
+
     const user = await createUser({
       username,
-      pw_hash, 
+      pw_hash,
       first_name,
-      last_name
-    })
-
-    req.login(user, (err) => {
-      if (err) { return next(err); }
-      return res.redirect('/membership')
+      last_name,
     });
 
-  } catch(e) {
-    next(e)
+    req.login(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect("/memberjship");
+    });
+  } catch (e) {
+    next(e);
   }
-}
+};
 
 const updateMembership = async (req, res, next) => {
-  if (req.body.passcode !== '54321') {
-    return res.render('membership', { errors: [{msg: 'Passcode is incorrect.'}] })
+  if (req.body.passcode !== "54321") {
+    return res.render("membership", {
+      errors: [{ msg: "Passcode is incorrect." }],
+    });
   }
 
-  await updateUserMembership(req.user.id, 'member')
-  res.redirect('/')
-}
+  await updateUserMembership(req.user.id, "member");
+  res.redirect("/");
+};
 
-module.exports = { signup, updateMembership }
+module.exports = { signup, updateMembership };

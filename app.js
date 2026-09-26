@@ -5,7 +5,7 @@ const passport = require('./config/passport')
 const signUpValidators = require('./validators/signup.validator')
 const { signup, updateMembership } = require('./controllers/auth.controller')
 const protectedRoute = require('./middlewares/protectedRoute')
-const { addMessage } = require('./controllers/message.controller')
+const { addMessage, deleteMessage } = require('./controllers/message.controller')
 const messageValidator = require('./validators/message.validator')
 const { getAllMessages } = require('./models/message.model')
 require('dotenv').config()
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session_middleware)
 app.use(passport.initialize())
 app.use(passport.session())
-
+ 
 app.get('/', async (req, res) => res.render('index', { req, messages: await getAllMessages() }))
 
 app.post('/sign-up', signUpValidators, signup)
@@ -57,5 +57,7 @@ app.get('/logout', (req, res, next) => {
 
 app.get('/new-message', protectedRoute, (req, res) => res.render('new-message', { errors: [], body: {} }))
 app.post('/new-message', protectedRoute, messageValidator, addMessage)
+
+app.post('/message/delete/:id', protectedRoute, deleteMessage)
 
 app.listen(PORT)

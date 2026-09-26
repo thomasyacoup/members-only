@@ -10,7 +10,7 @@
     <a href="/logout">logout</a>
     <a href="/new-message">create new message</a>
   <% } else { %>
-    <a href="/login">login</a>
+    <a href="/login">login</a>  
     <a href="/sign-up">sign up</a>
   <% } %>
   <% messages.forEach(message => { %>
@@ -20,7 +20,7 @@
       <p><%= message.content %></p>
       <p><%= message.created_at.toLocaleDateString() %></p>
       <% if ((req.isAuthenticated() && req.user.id === message.author_id) || req.isAuthenticated() && req.user.flag === 'admin') { %>
-        <form action="/delete-message/<%= message.id %>" method="post">
+        <form action="/message/delete/<%= message.id %>" method="post">
           <button type="submit">delete</button>
         </form>
       <% } %>
