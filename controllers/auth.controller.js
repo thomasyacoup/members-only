@@ -27,7 +27,7 @@ const signup = async (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.redirect("/memberjship");
+      return res.redirect("/membership");
     });
   } catch (e) {
     next(e);
