@@ -26,9 +26,12 @@
   <nav>
     <a href="/">Home</a>
     <% if (req.isAuthenticated()) { %>
-      <a href="/new-message">New message</a>
-      <a href="/membership">Membership</a>
       <a href="/logout">Logout</a>
+      <% if (req.user.flag === 'visitor') { %>
+        <a href="/membership">Membership</a>
+      <% } else { %>
+        <a href="/new-message">New message</a>
+      <% } %>
     <% } else { %>
       <a href="/login">Login</a>
       <a href="/sign-up">Sign up</a>
