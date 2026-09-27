@@ -45,13 +45,15 @@ app.get("/membership", protectedRoute, (req, res) => {
 
 app.get("/login", (req, res) => {
   if (req.isAuthenticated()) return res.redirect("/");
-  res.render("login", { errors: [], body: {} });
+  console.log(req.session);
+  res.render("login", { errors: [], body: {}, req });
 });
 app.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/login",
+    failureMessage: true,
   }),
 );
 
