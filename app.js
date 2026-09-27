@@ -12,6 +12,7 @@ const {
 const messageValidator = require("./validators/message.validator");
 const { getAllMessages } = require("./models/message.model");
 const errorHandler = require("./middlewares/errorHandler");
+const protectedUserRoute = require("./middlewares/protectedUsersRoute");
 require("dotenv").config();
 
 const PORT = process.env.PORT;
@@ -66,12 +67,12 @@ app.get("/logout", (req, res, next) => {
   });
 });
 
-app.get("/new-message", protectedRoute, (req, res) =>
+app.get("/new-message", protectedRoute, protectedUserRoute, (req, res) =>
   res.render("new-message", { errors: [], body: {} }),
 );
-app.post("/new-message", protectedRoute, messageValidator, addMessage);
+app.post("/new-message", protectedRoute, protectedUserRoute, messageValidator, addMessage);
 
-app.post("/message/delete/:id", protectedRoute, deleteMessage);
+app.post("/message/delete/:id", protectedRoute, protectedUserRoute, deleteMessage);
 
 app.use(errorHandler);
 
